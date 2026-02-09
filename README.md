@@ -6,7 +6,7 @@ The necessary code has already been modified for you, you can checkout the chang
 
 # Steps:
 
-1. Add the package to the Unity project, it is currently hosted on the [OpenUPM registry](https://openupm.com/packages/com.bernatrosello.nearby-connections-transport/), though you could also download it directly from [GitHub repository](https://github.com/BernatRosello/Unity-NearbyConnections-Transport/tree/upm). Following the installation steps described on either of those should get you up and running.
+1. Add the package to the Unity project, it is currently hosted on the [OpenUPM registry](https://openupm.com/packages/com.bernatrosello.nearby-connections-transport/), this is the recommended method of installation. Though, you could also download it directly from [GitHub repository](https://github.com/BernatRosello/Unity-NearbyConnections-Transport/tree/upm). Following the installation steps described on either of those should get you up and running.
 2. Change the build target to Android, if you don't have a preexisting Android-target Build Profile you can use the one provided in the Samples folder of the Nearby Connections Transport Package.
 3. Allow the depency package of External Dependecy Manager (EDM4U) to resolve the external dependencies required by the transport.
 4. Change the NetworkManager Transport over to the Nearby Connections Transport. This can be done by simply removing the reference to the current transport and selecting it from the drop-down menu for transport selection that shows up when None is referenced.
