@@ -3,12 +3,18 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
+
+// ---- MODIFIED: NBC Transport serverless discovery & connection porting ------
+/*
 using Unity.Services.Core;
 using Unity.Services.Authentication;
 using Unity.Services.Relay;
 using Unity.Services.Relay.Models;
 using Unity.Netcode.Transports.UTP;
 using Unity.Networking.Transport.Relay;
+*/
+using Unity.Netcode.Transports.NearbyConnections;
+// -----------------------------------------------------------------------------
 
 public class GameManager : NetworkBehaviour
 {
@@ -16,7 +22,7 @@ public class GameManager : NetworkBehaviour
     public static GameManager Instance;
     private void Awake()
     {
-        if(Instance!=null && Instance != this)
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
         }
@@ -32,7 +38,7 @@ public class GameManager : NetworkBehaviour
     {
         NetworkManager.Singleton.OnClientConnectedCallback += (clientId) =>
         {
-            Debug.Log("Client with id "+clientId + " joined");
+            Debug.Log("Client with id " + clientId + " joined");
             if (NetworkManager.Singleton.IsHost &&
             NetworkManager.Singleton.ConnectedClients.Count == 2)
             {
@@ -40,8 +46,10 @@ public class GameManager : NetworkBehaviour
             }
         };
 
-        await UnityServices.InitializeAsync();
-        await AuthenticationService.Instance.SignInAnonymouslyAsync();
+        // ---- REMOVED: NBC Transport serverless discovery & connection porting ------
+        // await UnityServices.InitializeAsync();
+        // await AuthenticationService.Instance.SignInAnonymouslyAsync();
+        // ----------------------------------------------------------------------------
     }
 
 
@@ -54,9 +62,11 @@ public class GameManager : NetworkBehaviour
     }
 
 
+    // ---- MODIFIED: NBC Transport serverless discovery & connection porting ------
     [SerializeField] private TextMeshProUGUI joinCodeText;
     public async void StartHost()
     {
+        /*
         try
         {
             Allocation allocation =  await RelayService.Instance.CreateAllocationAsync(1);
@@ -72,15 +82,21 @@ public class GameManager : NetworkBehaviour
         {
             Debug.Log(e);
         }
-
+        */
+        NetworkManager.StartHost();
+        NBCTransport.Instance.OnAdvertiserReceivedConnectionRequest += (_, _) =>
+        {
+            authCodeText.text = NBCTransport.Instance.PendingRequestEndpoints.Last().authCode;
+        };
     }
+    // ----------------------------------------------------------------------------
 
-
-
+    // ---- MODIFIED: NBC Transport serverless discovery & connection porting ------
     [SerializeField] private TMP_InputField joinCodeInput;
 
     public async void StartClient()
     {
+        /*
         try
         {
             JoinAllocation joinAllocation = await RelayService.Instance.JoinAllocationAsync(joinCodeInput.text);
@@ -91,8 +107,14 @@ public class GameManager : NetworkBehaviour
         {
             Debug.Log(e);
         }
-        
+        */
+        NetworkManager.StartClient();
+        NBCTransport.Instance.OnBrowserSentConnectionRequest += (_, _) =>
+        {
+            authCodeText.text = NBCTransport.Instance.PendingRequestEndpoints.Last().authCode;
+        };
     }
+    // ----------------------------------------------------------------------------
 
 
     [SerializeField] private GameObject gameEndPanel;
@@ -115,7 +137,6 @@ public class GameManager : NetworkBehaviour
         }
     }
 
-    
     private void ShowOpponentMsg(string msg)
     {
         if (IsHost)
@@ -139,7 +160,7 @@ public class GameManager : NetworkBehaviour
     }
 
 
-    [ServerRpc(RequireOwnership =false)]
+    [ServerRpc(RequireOwnership = false)]
     private void OpponentMsgServerRpc(string msg)
     {
         msgText.text = msg;
@@ -164,13 +185,13 @@ public class GameManager : NetworkBehaviour
             SpwanBoard();
             RestartClientRpc();
         }
-        
+
         // Destroy the current Game Board
         // Spawn a new board
         // Hide the Result Panel
     }
 
-    [ServerRpc(RequireOwnership =false)]
+    [ServerRpc(RequireOwnership = false)]
     private void RestartServerRpc()
     {
         Destroy(newBoard);

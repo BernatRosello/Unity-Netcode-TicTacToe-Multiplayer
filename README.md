@@ -2,7 +2,7 @@
  
 This branch's prupose is to test the UX of migrating a traditional NGO project, particularly one using the Relay Transport.
 
-The necessary code has already been modified for you, you can checkout the changes in the GameManager.cs file.
+The necessary code has already been modified for you, you can checkout the changes in the GameManager.cs file (It will initially give out an error, don't worry this error is expected because the assembly reference to the transport is missing).
 
 # Steps:
 
