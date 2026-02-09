@@ -13,7 +13,7 @@ using Unity.Services.Relay.Models;
 using Unity.Netcode.Transports.UTP;
 using Unity.Networking.Transport.Relay;
 */
-using Unity.Netcode.Transports.NearbyConnections;
+using Netcode.Transports.NearbyConnections;
 // -----------------------------------------------------------------------------
 
 public class GameManager : NetworkBehaviour
@@ -84,10 +84,6 @@ public class GameManager : NetworkBehaviour
         }
         */
         NetworkManager.StartHost();
-        NBCTransport.Instance.OnAdvertiserReceivedConnectionRequest += (_, _) =>
-        {
-            authCodeText.text = NBCTransport.Instance.PendingRequestEndpoints.Last().authCode;
-        };
     }
     // ----------------------------------------------------------------------------
 
@@ -109,10 +105,6 @@ public class GameManager : NetworkBehaviour
         }
         */
         NetworkManager.StartClient();
-        NBCTransport.Instance.OnBrowserSentConnectionRequest += (_, _) =>
-        {
-            authCodeText.text = NBCTransport.Instance.PendingRequestEndpoints.Last().authCode;
-        };
     }
     // ----------------------------------------------------------------------------
 
